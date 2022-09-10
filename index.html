@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js" integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.min.js" integrity="sha384-ODmDIVzN+pFdexxHEHFBQH3/9/vQ9uori45z4JjnFsRydbmQbmL5t1tQ0culUzyK" crossorigin="anonymous"></script>
+    <title>Document</title>
+    <style>
+      table { 
+  width: 100%; 
+  border-collapse: collapse; 
+}
+/* Zebra striping */
+tr:nth-of-type(odd) { 
+  background: #eee; 
+}
+th { 
+  background: #333; 
+  color: white; 
+  font-weight: bold; 
+}
+td, th { 
+  padding: 6px; 
+  border: 1px solid #ccc; 
+  text-align: left; 
+}
+@media 
+only screen and (max-width: 760px),
+(min-device-width: 768px) and (max-device-width: 1024px)  {
+
+	/* Force table to not be like tables anymore */
+	table, thead, tbody, th, td, tr { 
+		display: block; 
+	}
+	
+	/* Hide table headers (but not display: none;, for accessibility) */
+	thead tr { 
+		position: absolute;
+		top: -9999px;
+		left: -9999px;
+	}
+	
+	tr { border: 1px solid #ccc; }
+	
+	td { 
+		/* Behave  like a "row" */
+		border: none;
+		border-bottom: 1px solid #eee; 
+		position: relative;
+		padding-left: 50%; 
+	}
+	
+	td:before { 
+		/* Now like a table header */
+		position: absolute;
+		/* Top/left values mimic padding */
+		top: 6px;
+		left: 6px;
+		width: 45%; 
+		padding-right: 10px; 
+		white-space: nowrap;
+	}
+	
+	/*
+	Label the data
+	*/
+	td:nth-of-type(1):before { content: "Biometer Parameter"; }
+	td:nth-of-type(2):before { content: "Measured Value"; }
+	td:nth-of-type(3):before { content: "Unit"; }
+	td:nth-of-type(4):before { content: "Reference Interval"; }
+}
+    .gauge {
+  width: 100%;
+  max-width: 250px;
+  font-family: "Roboto", sans-serif;
+  font-size: 32px;
+  color: #004033;
+}
+
+.gauge__body {
+  width: 100%;
+  height: 0;
+  padding-bottom: 50%;
+  background: #b4c0be;
+  position: relative;
+  border-top-left-radius: 100% 200%;
+  border-top-right-radius: 100% 200%;
+  overflow: hidden;
+}
+
+.gauge__fill {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: inherit;
+  height: 100%;
+  background: #009578;
+  transform-origin: center top;
+  transform: rotate(0.25turn);
+  transition: transform 0.2s ease-out;
+}
+
+.gauge__cover {
+  width: 75%;
+  height: 150%;
+  background: #ffffff;
+  border-radius: 50%;
+  position: absolute;
+  top: 25%;
+  left: 50%;
+  transform: translateX(-50%);
+
+  /* Text */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 25%;
+  box-sizing: border-box;
+}
+
+      .exam { 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    text-align: center;
+}
+      @media screen and (min-width: 601px) {
+  div.example {
+    font-size: 80px;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  div.example {
+    font-size: 30px;
+  }
+}
+@media screen and (max-width: 450px) {
+  .mint {
+    padding-left:0;
+  }
+}
+    </style>
+    
+</head>
+<body>
+  <h1 id="msg"></h1>
+  <div class="example">
+     <div style="font-size:4vw;margin-bottom: 60px;color:rgb(85, 0, 255)" class="exam my-3">Remorphosis Private Limited Solutions</div>
+  </div>
+    <div class="container my-3">
+      <form  method="POST">
+        <div class="row g-2">
+            <div class="col-md">
+              <div class="form-floating">
+                <input class="form-control" id="name" name="name" placeholder="name">
+                <label for="name">Patient Name</label>
+              </div>
+            </div>
+            <div class="col-md">
+                <div class="form-floating">
+                  <input class="form-control" id="age" name="age" placeholder="age">
+                  <label for="age">Age</label>
+                </div>
+              </div>
+              <div class="col-md">
+                <div class="form-floating">
+                  <select class="form-select" id="gender" name="gender" placeholder="gender" >
+                    <option selected>Open this menu</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Others">Others</option>
+                  </select>
+                  <label for="gender">Gender</label>
+                </div>
+              </div>
+          </div>
+          <div class="text-center" style="margin-top:40px">
+            <div class="row">
+              <div class="col-6">
+                <div class="input-group mb-3">
+                  <div style="padding-right:80px; padding-left:281px">
+                    <span id="ti">time elapsed:</span>
+                  </div>
+                    <div id="mainstopwatch">
+                      <div class="mainTime">
+                          <span id="mainminute" class="text-center">00</span>
+                          <span id="mainsecond" class="text-center">00</span>
+                          <span id="milliseconds" class="text-center">00</span>
+       
+                  </div>
+                  <br>
+                  <button id="start" onclick="start();">Start</button>
+                  <button id="stop" onclick="stop();">Stop</button>
+                  <button id="reset" onclick="reset();">Reset</button>
+                  </div>
+              </div>
+            </div>
+            <div class="my-3">
+               <input type="text" id="text1" name="text1" oninput="add_number()" placeholder="A">
+                 <input type="text" id="text2" name="text2" oninput="add_number()" placeholder="B">
+            </div>
+            <div class="form-floating my-3">
+                <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 250px"></textarea>
+                <label for="floatingTextarea2"></label>
+              </div>
+              <div>
+                <table>
+                  <thead>
+                  <tr>
+                    <th class="text-center">Biometer parameter</th>
+                    <th class="text-center">Measured value</th>
+                    <th class="text-center">Unit</th>
+                    <th class="text-center">Reference Interval</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr>
+                    <td class="text-center">Delta</td>
+                    <td class="text-center" ><input type="text" id="txtresult1" name="txtresult1" style="width:18vw"></td>
+                    <td class="text-center">Hz</td>
+                    <td class="text-center">10.2-15</td>
+                  </tr>
+                  <tr>
+                    <td class="text-center">Theta</td>
+                    <td class="text-center"><input type="text" id="txtresult2" name="txtresult2" style="width:18vw"></td>
+                    <td class="text-center">Hz</td>
+                    <td class="text-center">10.2-15</td>
+                  </tr>
+                  <tr>
+                    <td class="text-center">Alpha</td>
+                    <td class="text-center"><input type="text" id="txtresult3" name="txtresult3" style="width:18vw"></td>
+                    <td class="text-center">Hz</td>
+                    <td class="text-center">10.2-15</td>
+                  </tr>
+                  <tr>
+                    <td class="text-center">Beta</td>
+                    <td class="text-center"><input type="text" id="txtresult4" name="txtresult4" style="width:18vw"></td>
+                    <td class="text-center">Hz</td>
+                    <td class="text-center">10.2-15</td>
+                  </tr>
+                  <tr>
+                    <td class="text-center">DAR</td>
+                    <td class="text-center"><input type="text" id="txtresult5" name="txtresult5" style="width:18vw"></td>
+                    <td class="text-center">-</td>
+                    <td class="text-center">10.2-15</td>
+                  </tr>
+                  <tr>
+                    <td class="text-center">DABTR</td>
+                    <td class="text-center"><input type="text" id="txtresult6" name="txtresult6" style="width:18vw"></td>
+                    <td class="text-center">-</td>
+                    <td class="text-center">10.2-15</td>
+                  </tr>
+                  <tr>
+                    <td class="text-center">BSI</td>
+                    <td class="text-center"><input type="text" id="txtresult7" name="txtresult7" style="width:18vw"></td>
+                    <td class="text-center">-</td>
+                    <td class="text-center">10.2-15</td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="my-3">
+                <div class="float-start">
+                  <p>Conclusion:</p>
+                </div>
+                <div style="float: left; width: 90%;">
+                  <textarea style="width: 100%; max-width: 100%;" id="conclusion" name="conclusion"></textarea>
+                </div>
+                <div class="gauge">
+                  <div class="gauge__body">
+                    <div class="gauge__fill"></div>
+                    <div class="gauge__cover"></div>
+                  </div>
+                </div>
+                <div class="my-3">
+                    <div class="float-start">
+                      <p>References:</p>
+                    </div>
+                    <div style="float: left; width: 90%;">
+                      <p style="width: 100%; max-width: 100%;">This is the constant reference data thats the most important thing to be seen and it needs to be shown constantly. this data is of high importance. Please ensure that the data reference provided here is accurate to the last point.This is the constant reference data thats the most important thing to be seen and it needs to be shown constantly. this data is of high importance. Please ensure that the data reference provided here is accurate to the last point.This is the constant reference data thats the most important thing to be seen and it needs to be shown constantly. this data is of high importance. Please ensure that the data reference provided here is accurate to the last point.This is the constant reference data thats the most important thing to be seen and it needs to be shown constantly. this data is of high importance. Please ensure that the data reference provided here is accurate to the last point</p>
+                    </div>
+                  </div>
+                  <div class="my-3">
+                    <div class="float-start">
+                      <p>Clinical observations:</p>
+                    </div>
+                    <div class="textarea-container">
+                        <textarea class="auto-resize"  id="clinical" name="clinical" placeholder="Enter Text Here..." style="float: left; width: 85%;">
+                        </textarea>
+                    </div>
+                  </div>
+              </div>
+              <div>
+                <button type="button" style="width: 20%; float: right; margin:30px;margin-left:20px;font-size:20px" class="btn btn-primary" onclick="window.print()">Print</button>
+                <input type="submit" id="sub" class="btn btn-primary mint" style="width: 20%; float: right; margin:30px;font-size:20px">
+                <!-- <button type="submit">Send</button> -->
+              </div>
+              
+    </div>
+  </form>
+    <script>
+      let form = document.querySelector("form");
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            document.querySelector("#sub").value = "Submiting..";
+            let data = new FormData(form);
+            fetch('https://script.google.com/macros/s/AKfycbzuPo-GLhgGKK2fqCNYGEpw78Tm1l0GGYvyD-zf-jPaQZ1KuwrY0L6dzs6GhbLzv7M0/exec', {
+                    method: "POST",
+                    body: data
+                })
+                .then(res => res.text())
+                .then(data => {
+                    window.alert('your data has been submitted');
+                    document.querySelector("#msg").innerHTML = data+'  submitted';
+                    document.querySelector("#sub").value = "Submit"
+                });
+        })
+      var text1 = document.getElementById("text1");
+      var text2 = document.getElementById("text2");
+      // var first_number = parseFloat(text1.value);
+      // var second_number = parseFloat(text2.value);
+      // let result = first_number + second_number;
+      function add_number() {
+   var first_number = parseFloat(text1.value);
+   if (isNaN(first_number)) first_number = 0;
+   var second_number = parseFloat(text2.value);
+   if (isNaN(second_number)) second_number = 0;
+   let result = first_number + second_number;
+   document.getElementById("txtresult1").value = result;
+   document.getElementById("txtresult2").value = result;
+   document.getElementById("txtresult3").value = result;
+   document.getElementById("txtresult4").value = result;
+   document.getElementById("txtresult5").value = result;
+   document.getElementById("txtresult6").value = result;
+   document.getElementById("txtresult7").value = result;
+   if(result<=10){
+    document.getElementById("conclusion").innerHTML="LOW"
+   }
+   else if(result>10 && result<=20){
+    document.getElementById("conclusion").innerHTML="Normal"
+   }
+   else if(result>20 && result<=30){
+    document.getElementById("conclusion").innerHTML="High"
+   }
+   else{
+    document.getElementById("conclusion").innerHTML="Very High"
+   }
+}
+     let [milliseconds,second,minute,] = [0,0,0];
+let timerRef = document.querySelector('.mainTime');
+let int = null;
+
+document.getElementById('start').addEventListener('click', ()=>{
+    if(int!==null){
+        clearInterval(int);
+    }
+    int = setInterval(mainTime,10);
+});
+
+document.getElementById('stop').addEventListener('click', ()=>{
+    clearInterval(int);
+});
+
+document.getElementById('reset').addEventListener('click', ()=>{
+    clearInterval(int);
+    [milliseconds,seconds,minutes,hours] = [0,0,0];
+    timerRef.innerHTML = '00 : 00 : 00';
+});
+
+function mainTime(){
+    milliseconds+=10;
+    if(milliseconds == 1000){
+        milliseconds = 0;
+        second++;
+        if(second == 60){
+            second = 0;
+            minute++;
+            if(minute == 60){
+                minute = 0;
+            }
+        }
+    }
+
+ let m = minute < 10 ? "0" + minute : minute;
+ let s = second < 10 ? "0" + second : second;
+ let ms = milliseconds < 10 ? "00" + milliseconds : milliseconds < 100 ? "0" + milliseconds : milliseconds;
+
+ timerRef.innerHTML = ` ${m} : ${s} : ${ms}`;
+}
+var multipleFields=document.querySelectorAll('.auto-resize');
+for(var i=0; i<multipleFields.length; i++){
+multipleFields[i].addEventListener('input',autoResizeHeight,0);
+}
+
+// auto resize multiple textarea
+function autoResizeHeight(){
+  this.style.height="auto";
+  this.style.height= this.scrollHeight+"px";
+  this.style.borderColor="black";
+}
+
+const gaugeElement = document.querySelector(".gauge");
+var first = parseFloat(text1.value);
+var sec = parseFloat(text2.value);
+var answer=first+sec;
+function setGaugeValue(gauge, answer) {
+  // if (answer < 0 || answer > 1) {
+  //   return;
+  // }
+
+  gauge.querySelector(".gauge__fill").style.transform = `rotate(${
+    answer / 2
+  }turn)`;
+  gauge.querySelector(".gauge__cover").textContent = `${(
+    answer * 40
+  )}`;
+}
+setGaugeValue(gaugeElement,answer/100);
+
+    </script>
+</body>
+</html>
